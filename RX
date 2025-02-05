@@ -1,0 +1,37 @@
+#include <IRremote.h>
+
+int RECV_PIN = 11;  // Define the pin for the IR receiver
+
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+void setup() {
+  Serial.begin(9600);
+  irrecv.enableIRIn(); // Start the receiver
+}
+
+void loop() {
+  if (irrecv.decode(&results)) {
+    // Ensure the received data has the correct number of bits (16 bits for combined PV number and scaled voltage)
+    if (results.bits == 16) {
+      unsigned long payload = results.value;  // Extract the payload
+     // Serial.print("Received Payload: ");
+     // Serial.println(payload, HEX);  // Print the received payload in hex format
+
+      // Extract PV number (upper 4 bits) and scaled voltage (lower 12 bits)
+      int pvNumber = (payload >> 12) & 0xF;  // PV number (4 bits)
+      int scaledVolts = payload & 0xFFF;     // Scaled voltage (12 bits)
+
+      // Convert the scaled voltage back to the original float value
+      float actualVolts = scaledVolts / 100.0;
+
+      // Print the decoded value
+      Serial.print("RX4 PV: ");
+      Serial.print(pvNumber);
+      Serial.print("Voltage: ");
+      Serial.println(actualVolts);
+    }
+
+    irrecv.resume(); // Prepare to receive the next value
+  }
+}
