@@ -392,7 +392,7 @@ int readAndConvert(int analogPin, int digitalPin, int pvNumber) {
 
   // Transmit the payload using RC5 protocol
   for (int i = 0; i < 2; i++) {
-    irsend.sendRC5(payload, 16);  // Sending 28 bits with RC5
+    irsend.sendRC5(payload, 16);  // Sending 16 bits with RC5
     delay(40);  // Adjust delay as needed
   }
 
